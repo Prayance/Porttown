@@ -1,0 +1,406 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+	<!-- Meta Tags //-->
+	<meta charset="UTF-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" /> 
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" /> 
+	
+	<!-- Our MAIN CSS File //-->
+	<link rel="stylesheet" type="text/css" href="css/main.css" />
+	<!-- Our DEEFAULT CSS File //-->
+	<link rel="stylesheet" type="text/css" href="css/default.css" />
+	<!-- Our COMPONENT CSS File //-->
+	<link rel="stylesheet" type="text/css" href="css/component.css" />
+	<!-- BootStrap CSS //-->
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css" />
+
+    <!-- GoogleMaps JavaScript API //-->
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=false&key=AIzaSyBKOewfHfPavkhP0y46oOof-lA_bHthrVs"></script>
+
+
+    <!-- GoogleMaps AJAX API //-->
+    <script type="text/javascript" src="js/js.js"></script>
+    <script type="text/javascript" src="js/gmaps.js"></script> 
+    <script type="text/javascript" src="js/jquery-1.11.3.min.js"></script>
+    <script type="text/javascript" src="js/map.js"></script>
+    <script type="text/javascript" src="js/common.js"></script>
+    <script type="text/javascript" src="js/infowindow.js"></script>
+    <script type="text/javascript" src="js/jquery-2.2.0.min.js"></script>
+    <script type="text/javascript" src="js/marker.js"></script>
+    <script type="text/javascript" src="js/overlay.js"></script>
+    <script type="text/javascript" src="js/stats.js"></script>
+    <script type="text/javascript" src="js/util.js"></script>
+    <script type="text/javascript" src="js/controls.js"></script>
+    <script type="text/javascript" src="js/onion.js"></script>
+    <script type="text/javascript" src="js/markerclusterer.js"></script>
+    <script type="text/javascript" src="js/modernizr.custom.js"></script>
+    <script type="text/javascript" src="js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="js/classie.js"></script>
+    <script type="text/javascript" src="js/index.js"></script>
+
+    
+
+</head>
+<body class="cbp-spmenu-push">
+<nav class="cbp-spmenu cbp-spmenu-vertical cbp-spmenu-left" id="cbp-spmenu-s1">
+	<h3>Porttowns</h3>  <!-- Change menu items here!!! -->
+	<form>
+		<input type="text" id="searcher" placeholder="Search for Censuses.." style="margin:5px 0 0 10px;">
+		<input type="button" value="Search" onClick="passSearchParams()">
+	</form>
+	<a href="index.html">Map</a>
+	<a href="categories.html ">Categories</a> <!-- ADD MENU LINK HERE (IN SPEECH MARKS) -->		
+	<a href="mostpopular.html">Most Popular</a>
+	<a href="walks.html">Walks in Portsmouth</a>
+	<a href="about.html">About</a>
+	<a href="partners.html">Partners</a>
+	<a href="termsConditions.html">Terms and Conditions</a>
+</nav>
+<div class="container">
+<header> 
+	<div class="nav">
+		<div class="main">
+			<section class="buttonset">
+				<!-- Class "cbp-spmenu-open" gets applied to menu and "cbp-spmenu-push-toleft" or "cbp-spmenu-push-toright" to the body -->
+				<span class="glyphicon glyphicon-menu-hamburger btn-lg" id="showLeftPush" style="cursor: pointer;"></span>
+			</section>
+		</div>
+	</div>
+	<div class="logo">
+		<a href="index.html"><img src="img/porttown.png"></a>
+	</div>
+	<div class="mapProp">
+		<span class="glyphicon glyphicon-tower btn-lg" name="sForm" onClick="showhideOverlay()" style="cursor: pointer;"></span>
+	</div>
+</header>
+
+<div id="map"></div>
+
+	<footer>
+		<div class="textOne">
+			<p>
+				The Port Towns and Urban Cultures group is dedicated to furthering our 
+
+				understanding of the social and cultural impact of life in port towns from the 
+
+				eighteenth century to the modern period.
+
+				Find out more about the project, keep up to date with the latest events, be informed 
+
+				of app updates and project news by following us on Facebook and Twitter.
+
+				Got a story or image to share? Contact us <a href="mailto:ptuc@port.ac.uk">ptuc@port.ac.uk</a>
+
+				The Port Towns and Urban Cultures group is based at the University of Portsmouth 
+
+				and runs this project in partnership with other institutions and organisations, 
+
+				including Portsmouth History Centre.
+			</p>
+		</div>
+		<div class="social">
+			<a href="https://www.facebook.com/PortTownsAndUrbanCultures" target="_blank"><img src="img/fb.png"></a>
+			<a href="https://twitter.com/PortPTUC" target="_blank"><img src="img/twit.png"></a>
+		</div>
+		<div class="footerLogo"> 
+			<img src="img/footerlogo.png">
+			<p>&copy; 2015 Port Towns and Urban Cultures. All Rights Reserved.</p>
+			<h6>Designed and Created by Elisavet Andrikopoulou - Prayance</h6>
+		</div>
+		
+	</footer>
+</div>
+
+    <!-- START: Initialize & Display Map ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//-->
+    <script type="text/javascript">
+        // Setup Our Map Variables
+        var mapBounds = new google.maps.LatLngBounds(
+            new google.maps.LatLng(50.78672243, -1.11058723),
+            new google.maps.LatLng(50.80377265, -1.09470768)
+        );
+        var mapMinZoom = 13;
+        var mapMaxZoom = 19;
+        var opts = {
+            streetViewControl: false,
+            tilt: 0,
+            mapTypeId: google.maps.MapTypeId.ROADMAP,
+            center: new google.maps.LatLng(50.8066667, -1.0833333),
+            zoom: mapMinZoom
+        }
+
+        // Initialize the Map
+        var map = new google.maps.Map(document.getElementById('map'), opts);
+    </script>
+    <!-- ENDOF: Initialize & Display Map ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//-->
+
+    <script type="text/javascript">
+    var menuLeft = document.getElementById('cbp-spmenu-s1'),
+        showLeftPush = document.getElementById('showLeftPush'),
+        body = document.body;
+
+    /* !!! START: REQUIRED !!! */
+    showLeftPush.onclick = function () {
+        classie.toggle(this, 'active');
+        classie.toggle(body, 'cbp-spmenu-push-toright');
+        classie.toggle(menuLeft, 'cbp-spmenu-open');
+        disableOther('showLeftPush');
+    };
+    /* !!! ENDOF: REQUIRED !!! */
+
+    /* !!! START: REQUIRED (To Look Cooler) !!! */
+    function disableOther(button) {
+        if (button !== 'showLeftPush') {
+            classie.toggle(showLeftPush, 'disabled');
+        }
+    }
+    /* !!! ENDOF: REQUIRED (To Look Cooler) !!! */
+    </script>
+    <!-- ENDOF: Menu Show/Hide (using Classie JavaScript) //-->
+    <!-- START: Additional Scripts used by Initialize & Display ~~~~~~~~~~~~~~~~~~~~~~~~~//-->
+    <script type="text/javascript">
+        // Setup Variables
+        var lookup = [];
+
+        // ??? Does something with the Current page Address ???
+        function getUrlVars() {
+            var vars = {};
+            var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (m, key, value) {
+                vars[key] = value;
+            });
+            return vars;
+        }
+
+        // ??? Does something dependent on the search value ???
+        function isLocationFree(search) {
+            for (var i = 0, l = lookup.length; i < l; i++) {
+                if (lookup[i][0] === search[0] && lookup[i][1] === search[1]) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        function passSearchParams() {
+            window.location.href = "index.html?type=search&keywords="
+                                                            + document.getElementById("searcher").value;
+        }
+
+        // ??? Does something with duplicate searches ???
+        function duplicateLocation(search) {
+            for (var i = 0, l = lookup.length; i < l; i++) {
+                if (lookup[i][0] === search[0] && lookup[i][1] === search[1]) {
+                    return i;
+                }
+            }
+        }
+    </script>
+    <!-- ENDOF: Additional Scripts used by Initialize & Display ~~~~~~~~~~~~~~~~~~~~~~~~~//-->
+    <!-- START: Load & Display Markers ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//-->
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var markers = [];
+            var infoWindows = [];
+            var extras = [];
+            var typeVar = getUrlVars()["type"];
+            var requestType;
+            // Change the RequestType depending on the provided option
+            switch (typeVar) {
+                case "sailor": requestType = "getSailor"; break;
+                case "pubs": requestType = "getPub"; break;
+                case "lodg_houses": requestType = "getLHouse"; break;
+                case "crimes": requestType = "getCrime"; break;
+                case "welfare": requestType = "getWelfare"; break;
+                case "leisure": requestType = "getLeisure"; break;
+                case "folklore": requestType = "getFolklore"; break;
+                case "search": requestType = "search"; break;
+                default: requestType = "getAll"; break;
+            }
+
+            var dataArray = [];
+            if (getUrlVars()["keywords"] == null) {
+                dataArray = { type: requestType };
+            } else {
+                dataArray = {
+                    type: requestType,
+                    keywords: getUrlVars()["keywords"]
+                };
+            }
+
+            /* START: AJAX Data Request */
+            $.ajax({
+                type: "GET",
+                dataType: "json",
+                ContentType: "application/json",
+                url: "http://porttowns.co.uk/porttowns/new/newest.php",
+                data: dataArray,
+                success: function (response) {
+                    $.each(response.outputArray, function (index, element) {
+                        var latLng = new google.maps.LatLng(element.Latitude, element.Longitude);
+                        // Creating a marker and putting it on the map
+                        var search = [element.Latitude, element.Longitude];
+                        if (isLocationFree(search)) {
+                            var infowindow = infowindow = new google.maps.InfoWindow();
+                            var marker = new google.maps.Marker({
+                                position: latLng,
+                                title: element.Title
+                            });
+
+                            var content = element.Title + "<br><br>" + element.Subtitle + "<br>" + element.Context + "<br>" + "<br>" + element.quote;
+                            infowindow.setContent(content);
+
+                            extras.push(0);
+                            infoWindows.push(infowindow);
+                            lookup.push([element.Latitude, element.Longitude]);
+                            markers.push(marker);
+                            //google.maps.event.addListener(marker, 'click', function() {
+                            //	infowindow.open(map,marker);
+                            //});
+                            //marker.setMap(map);
+                        } else {
+                            var markerIndex = duplicateLocation([element.Latitude, element.Longitude]);
+                            extras[markerIndex] = extras[markerIndex] + 1;
+                            if (requestType == "search") {
+                                infoWindows[markerIndex].setContent(element.Title + "<br><br>" + element.Subtitle + "<br>" + element.Context + "<br>" + "<br>" + element.quote +
+                                '<br><br><a href="more.html?lat=' + element.Latitude + '&long='
+                                + element.Longitude + '&type=' + requestType + '&keywords=' + getUrlVars()["keywords"] + '" style="color:blue;">' + extras[markerIndex] + ' more</a>');
+                            } else {
+                                infoWindows[markerIndex].setContent(element.Title + "<br><br>" + element.Subtitle + "<br>" + element.Context + "<br>" + "<br>" + element.quote +
+                                '<br><br><a href="more.html?lat=' + element.Latitude + '&long='
+                                + element.Longitude + '&type=' + requestType + '" style="color:blue;">' + extras[markerIndex] + ' more</a>');
+                            }
+
+                        }
+                    });
+                    for (var i = 0, l = markers.length; i < l; i++) {
+                        google.maps.event.addListener(markers[i], 'click', (function (i) {
+                            return function () {
+                                infoWindows[i].open(map, markers[i]);
+                                openWindow = i;
+                            }
+                        })(i));
+                    }
+                    markerCluster = new MarkerClusterer(map, markers, {
+                        averageCenter: true
+                    });
+                }
+            });
+            /* ENDOF: AJAX Data Request */
+        });
+    </script>
+
+    <!-- The Delete Markers Function //-->
+    <script type="text/javascript">
+        function vanishMarkers() {
+            markers = [];
+            infowindow = null;
+            markerCluster.clearMarkers();
+        }
+    </script>
+    <!-- START: Load & Display Markers ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//-->
+    <!-- START: Prepare the Overlay ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//-->
+    <script type="text/javascript">
+        // Prepare the Overlay
+        var historicalOverlay = new google.maps.ImageMapType({
+            getTileUrl: function (coord, zoom) {
+                var proj = map.getProjection();
+                var z2 = Math.pow(2, zoom);
+                var tileXSize = 256 / z2;
+                var tileYSize = 256 / z2;
+                var tileBounds = new google.maps.LatLngBounds(
+                    proj.fromPointToLatLng(new google.maps.Point(coord.x * tileXSize, (coord.y + 1) * tileYSize)),
+                    proj.fromPointToLatLng(new google.maps.Point((coord.x + 1) * tileXSize, coord.y * tileYSize))
+                );
+                if (!mapBounds.intersects(tileBounds) || zoom < mapMinZoom || zoom > mapMaxZoom) return null;
+                return "Tiles/{z}/{x}/{y}.png".replace('{z}', zoom).replace('{x}', coord.x).replace('{y}', coord.y);
+            },
+            tileSize: new google.maps.Size(256, 256),
+            minZoom: mapMinZoom,
+            maxZoom: mapMaxZoom,
+            opacity: 0.70,
+            name: 'Tiles'
+        });
+
+        // PreSet the Value of Overlay Visibility
+        var oldMapVisible = false;
+    </script>
+    <!-- ENDOF: Prepare the Overlay ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//-->
+    <!-- START: Show/Hide the Overlay ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//-->
+    <script type="text/javascript">
+        function showhideOverlay() {
+            if (!oldMapVisible) {
+                // Place the Overlay on the Map
+                map.overlayMapTypes.push(historicalOverlay);
+                // Fit the map to the Bounds of the Overlay
+                map.fitBounds(mapBounds);
+                // Set the Value of Overlay Visibility
+                oldMapVisible = true;
+            } else {
+                // Clear the Overlay from the Map
+                map.overlayMapTypes.clear();
+                // Set the Value of Overlay Visibility
+                oldMapVisible = false;
+            }
+        }
+    </script>
+    <!-- ENDOF: Show/Hide the Overlay ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//-->
+    <!-- START: The Search Function ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//-->
+    <script type="text/javascript">
+        function searchme() {
+            thevalue = document.getElementById("searcher").value;
+            //alert("One");
+            $.ajax({
+                type: "GET",
+                dataType: "json",
+                ContentType: "application/json",
+                url: "http://porttowns.co.uk/porttowns/new/newest.php",
+                data: { type: "search", keywords: thevalue },
+                success: function (response) {
+                    vanishMarkers();
+                    $.each(response.outputArray, function (index, element) {
+                        var latLng = new google.maps.LatLng(element.Latitude, element.Longitude);
+                        // Create a marker and place it on the map
+                        var marker = new google.maps.Marker({
+                            position: latLng,
+                            title: element.Title
+                        });
+
+                        google.maps.event.addListener(marker, 'click', function () {
+                            // Check to see if we already have an InfoWindow
+                            if (!infowindow) {
+                                infowindow = new google.maps.InfoWindow();
+                            }
+                            var content = element.Title + "<br><br>" + element.Subtitle + "<br>" + element.Context;
+                            // Setting the content of the InfoWindow
+                            infowindow.setContent(content);
+                            // Tying the InfoWindow to the marker
+                            infowindow.open(map, marker);
+                        });
+                        markers.push(marker);
+                    });
+                    markerCluster = new MarkerClusterer(map, markers, {
+                        averageCenter: true
+                    });
+                    //alert("It is I, le'clair!" + response);
+                },
+                error: function () {
+                    alert("Sorry, I still haven't found what I'm looking for!");
+                }
+            });
+            //alert("Two");
+        }
+    </script>
+    <!-- ENDOF: The Search Function ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//-->
+    <!--//////////////////////////////////////////////////////////////////////////////////////
+        ENDOF: JavaScripts
+    ///////////////////////////////////////////////////////////////////////////////////////-->
+
+
+<!--//////////////////////////////////////////////////////////////////////////////////////
+	START: JavaScripts
+///////////////////////////////////////////////////////////////////////////////////////-->
+
+<!-- START: Menu Show/Hide (using Classie JavaScript) //-->
+
+</body>
+</html>

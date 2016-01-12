@@ -1,0 +1,291 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <!-- Meta Tags //-->
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Our MAIN CSS File //-->
+    <link rel="stylesheet" type="text/css" href="css/main.css" />
+    <!-- Our DEEFAULT CSS File //-->
+    <link rel="stylesheet" type="text/css" href="css/default.css" />
+    <!-- Our COMPONENT CSS File //-->
+    <link rel="stylesheet" type="text/css" href="css/component.css" />
+    <!-- BootStrap CSS //-->
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css" />
+
+
+    <!-- GoogleMaps AJAX API //-->
+    <script type="text/javascript" src="js/js.js"></script>
+    <script type="text/javascript" src="js/gmaps.js"></script>
+    <script type="text/javascript" src="js/jquery-1.11.3.min.js"></script>
+    <script type="text/javascript" src="js/map.js"></script>
+    <script type="text/javascript" src="js/common.js"></script>
+    <script type="text/javascript" src="js/infowindow.js"></script>
+    <script type="text/javascript" src="js/marker.js"></script>
+    <script type="text/javascript" src="js/overlay.js"></script>
+    <script type="text/javascript" src="js/jquery-2.2.0.min.js"></script>
+    <script type="text/javascript" src="js/stats.js"></script>
+    <script type="text/javascript" src="js/util.js"></script>
+    <script type="text/javascript" src="js/onion.js"></script>
+    <script type="text/javascript" src="js/controls.js"></script>
+    <script type="text/javascript" src="js/markerclusterer.js"></script>
+    <script type="text/javascript" src="js/modernizr.custom.js"></script>
+    <script type="text/javascript" src="js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="js/classie.js"></script>
+    <script type="text/javascript" src="js/index.js"></script>
+
+		<!-- gmaps API https://github.com/hpneo/gmaps //-->
+	<script src="js/modernizr.custom.js"></script>
+	<script type="text/javascript" src="js/gmaps.js"></script>
+	<script type="text/javascript">
+					function sendData(packed)
+					{
+					  // Initialize packed or we get the word 'undefined'
+					  //var packed = "sailor";
+					  
+					  window.location = "index.html?type=" + packed;
+					}
+	</script>
+</head>
+<nav class="cbp-spmenu cbp-spmenu-vertical cbp-spmenu-left" id="cbp-spmenu-s1">
+	<h3>Porttowns</h3>  <!-- Change menu items here!!! -->
+<!--	<form>
+	<input type="text" id="searcher" placeholder="Search for Censuses.." style="margin:5px 0 0 10px;">
+	<input type="button" value="Search" onClick="searchme()">
+	</form> -->
+	<a href="index.html">Map</a>
+	<a href="categories.html ">Categories</a> <!-- ADD MENU LINK HERE (IN SPEECH MARKS) -->		
+	<a href="mostpopular.html">Most Popular</a>
+	<a href="walks.html">Walks in Portsmouth</a>
+	<a href="about.html">About</a>
+	<a href="partners.html">Partners</a>
+	<a href="termsConditions.html">Terms and Conditions</a>
+</nav>
+<div class="container">
+<header> 
+	<div class="nav">
+		<div class="main">
+			<section class="buttonset">
+				<span class="glyphicon glyphicon-menu-hamburger btn-lg" id="showLeftPush" style="cursor: pointer;"></span>
+			</section>
+		</div>
+	</div>
+	<div class="logo">
+		<a href="index.html"><img src="img/porttown.png"></a>
+	</div>
+
+</header>
+
+
+
+<!-- START: The Get Walks Function ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//-->
+<script type="text/javascript">
+var map;
+$(document).ready(function() {
+	//var map = new GMaps({div: '#map',
+	map = new GMaps({div: '#map',
+							lat: 50.8066667,
+							lng: -1.0833333,
+							zoom: 13
+						});
+
+	$.ajax({type:			"GET",
+			dataType:		"json",
+			ContentType:	"application/json",
+			url:			"http://porttowns.co.uk/porttowns/new/newest.php",
+			data:			{type:	"getWalk"},
+			success:		function (response) {
+								$.each(response.outputArray, function (index, element) {
+										geocircle1 = map.drawCircle({
+											lat: element.Latitude,
+											lng: element.Longitude,
+											radius: 15,
+											strokeColor: '#BBD8E9',
+											strokeOpacity: 1,
+											strokeWeight: 3,
+											fillColor: '#BBD8E9',
+											fillOpacity: 0.6
+										});
+									
+										map.addMarker({
+											lat: element.Latitude,
+											lng: element.Longitude,
+											title: element.Title,
+											fences: [geocircle1],
+											infoWindow: {content: element.Title + "<br><br>" + '<br><br><a href="walk_details.html?type=getWalkById&id=' + element.ID + '" style="color:blue;">More info</a>'},
+											myID: element.ID
+										});
+								});
+							
+							},
+			error:			function () {
+								alert("Sorry, I still haven't found what I'm looking for!");
+							}
+	});
+	//alert("Two");
+	//startLocationTracking();
+});
+</script>
+<!-- ENDOF: The Get Walks Function ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//-->
+
+
+
+
+<!-- location tracking function ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//-->
+<script type="text/javascript">
+var watchID = 0;
+var curLat = "";		// This is the Latitude of our current position
+var curLng = "";		// This is the Longitude of our current position
+	
+function startLocationTracking() {
+	if (navigator.geolocation) {
+		//alert("Your Browser supports GeoLocation");
+		watchID = navigator.geolocation.watchPosition(getCurrentLocation,errorHandler,{enableHighAccuracy: true});
+	} else {
+		alert("I am sorry, there has been a problem tracking your GeoLocation.");
+	}
+}
+	
+function getCurrentLocation(position) {
+	curLat = position.coords.latitude;
+	curLng = position.coords.longitude;
+	//document.getElementById("mylocation").innerHTML = "Tracking your position --> Current Latitude : " + position.coords.latitude + " , Longitude : " + position.coords.longitude;
+	//document.getElementById("mylocation").innerHTML = "Tracking your position<br><b>Current Latitude:</b> " + position.coords.latitude + "<br><b>Current Longitude:</b> " + position.coords.longitude;
+	// Place our marker on the map
+	/*
+	map.addMarker({
+		lat: curLat,
+		lng: curLng,
+		title: "Me",
+		infoWindow: {content: "This is Me!"},
+		draggable: true,
+		icon: 'http://maps.google.com/mapfiles/ms/icons/green-dot.png',
+	});
+	*/
+	
+	//Test to see if we are within any of the geofences
+	var in_or_out = false;
+	var inside_marker_name = [];
+	var myIDs = [];
+	 
+	for (var i=0; i < map.markers.length; i++) {
+		this_marker = map.markers[i];
+		this_name = this_marker.title;
+		// Check if the current position is inside a fence
+		if (map.checkGeofence(parseFloat(curLat),parseFloat(curLng), map.markers[i].fences[0])) {
+			console.log("Found in: " + this_name);
+			in_or_out = true;
+			inside_marker_name.push(this_name);
+			myIDs.push(this_marker.myID);
+		} 
+		//else {
+			//  console.log("NOT Found in: " + this_name);
+		//}
+	}
+	if (in_or_out == true) {
+		if (inside_marker_name.length > 1) {
+			marker_list = "";
+			for (var i=0; i < myIDs.length; i++) {
+				marker_list += '<a href="walk_details.html?type=getWalkById&id=' + myIDs[i] + '" style="color:blue;">' + inside_marker_name[i] + ' </a>';
+			}
+			document.getElementById("mystatus").innerHTML = '<span style="color: Black;">You are near:  </span>' + marker_list;
+		} else {
+			document.getElementById("mystatus").innerHTML = '<span style="color: Black;">You are near:  </span>' + inside_marker_name;
+		}
+	} else {
+		//document.getElementById("mystatus").innerHTML = '<span style="color: red;">You are not close enough to any Portsmouth Walks!</span>';
+	}
+	/*
+	if (in_or_out == true) {
+		document.getElementById("mystatus").innerHTML = '<span style="color: green;">You are near this marker: </span>' + inside_marker_name;
+		console.log(this_marker.infoWindow);
+		map.hideInfoWindows;
+		//this_marker.infoWindow.open;
+	} else {
+		document.getElementById("mystatus").innerHTML = '<span style="color: red;">You not close enough to any Points of Interest!</span>';
+	}
+	*/
+}
+
+function errorHandler(error) {
+	//alert("Error while retrieving current position. Error code: " + error.code + ",Message: " + error.message);
+}
+
+function stopLocationTracking() {
+	if (watchID > 0) {
+		navigator.geolocation.clearWatch(watchID);
+		alert("Stopped Tracking Your Location");
+	}
+}
+</script>
+	
+	<!--<div id="mylocation">&nbsp;</div>-->
+	<!--<div id="myItems">&nbsp;</div>//-->
+	<!--<input type="button" value="Start Tracking Me" onclick="looping()"/>//-->
+	<div class="trackButtons">
+		<input type="button" class="btn btn-primary buttonOne" value="Start Tracking Me" onclick="startLocationTracking()"/>
+		<input type="button" class="btn btn-primary buttonTwo" value="Stop Tracking Me" onclick="stopLocationTracking()"/>
+	</div>
+	<div id="mystatus">&nbsp;</div>
+
+	<div id="map"></div>
+
+
+	
+		<footer>
+		<div class="textOne">
+			<p>
+				The Port Towns and Urban Cultures group is dedicated to furthering our 
+
+				understanding of the social and cultural impact of life in port towns from the 
+
+				eighteenth century to the modern period.
+
+				Find out more about the project, keep up to date with the latest events, be informed 
+
+				of app updates and project news by following us on Facebook and Twitter.
+
+				Got a story or image to share? Contact us <a href="mailto:ptuc@port.ac.uk">ptuc@port.ac.uk</a>
+
+				The Port Towns and Urban Cultures group is based at the University of Portsmouth 
+
+				and runs this project in partnership with other institutions and organisations, 
+
+				including Portsmouth History Centre.
+			</p>
+		</div>
+
+			<div class="social">
+				<a href="https://www.facebook.com/PortTownsAndUrbanCultures" target="_blank"><img src="img/fb.png"></a>
+				<a href="https://twitter.com/PortPTUC" target="_blank"><img src="img/twit.png"></a>
+			</div>
+			<div class="footerLogo"> 
+				<img src="img/footerlogo.png">
+				<p>&copy; 2015 Port Towns and Urban Cultures. All Rights Reserved.</p>
+				<h6>Designed and Created by Elisavet Andrikopoulou - Prayance</h6>
+			</div>
+			
+		</footer>
+	</div>
+
+
+
+<script src="js/classie.js"></script>
+		<script>
+			var menuLeft = document.getElementById( 'cbp-spmenu-s1' ),
+				showLeftPush = document.getElementById( 'showLeftPush' ),
+				body = document.body;
+
+// need this!!!!!
+			showLeftPush.onclick = function() { 
+				classie.toggle( this, 'active' );
+				classie.toggle( body, 'cbp-spmenu-push-toright' );
+				classie.toggle( menuLeft, 'cbp-spmenu-open' );
+			};
+// Need this ^^
+
+		</script>
+</body>
+</html>
